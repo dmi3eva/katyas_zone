@@ -1,0 +1,44 @@
+# Собираем образ с красивым названием
+docker image build --tag=katya_counter .
+
+# Собирем контейнер с красивым именем in detach
+# Для EXPOSE 1235 (Не работает, если поменять выходной)
+docker container run -p 1235:1235 --name=counter_container katya_counter
+http://localhost:1235/
+
+# EXPOSE 5321
+docker container run -d -p 5321:1235 --name=counter_container katya_counter
+http://localhost:5321/
+
+# Exec
+
+
+# Том.
+docker container run -d -p 5321:1235 --name=counter_container -v C:\\Users\\forka\\PycharmProjects\\katyas_zone\\docker\\runtime\\data\\output:/opt/data/output katya_counter
+# Это для способа №1.
+# FROM python:3.7.2-alpine3.8
+# EXPOSE 5321
+# RUN pip install flask
+# WORKDIR /opt
+# RUN mkdir src
+# RUN mkdir data
+# WORKDIR /opt/data
+# COPY /data .
+# WORKDIR /opt/src
+# COPY /src .
+# CMD ["python", "flask_it.py"]
+
+# Синоним:
+docker volume create --name katya_volume --opt type=volume --opt device=C:/Users/forka/PycharmProjects/katyas_zone/docker/another_runtime/data/output --opt o=bind
+
+
+docker run -d -p 5321:1235 --name=counter_container --mount type=volume,source=katya_volume,target=//opt//data//output katya_counter
+
+# Переменные среды
+docker container run -d -p 5321:1235 --name=counter_container --env name="Boris" --env value=11 --env conda=True --env POSE=700 -v C:\\Users\\forka\\PycharmProjects\\katyas_zone\\docker\\runtime\\data\\output:/opt/data/output katya_counter
+# Толко среда, без parse
+docker container run -d -p 5321:1235 --name=counter_container --env POSE=7 -v C:\\Users\\forka\\PycharmProjects\\katyas_zone\\docker\\runtime\\data\\output:/opt/data/output katya_counter
+
+# Old conf
+--name="Katya" --value=10 --conda=True --me="a" --POSE=42
+

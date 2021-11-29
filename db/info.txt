@@ -1,0 +1,11 @@
+Дмитрий Филипский, [13.10.21 16:39]
+это на тестовом стенде БД, в которой должны лежать данные по билдинг блокам:
+
+10.56.91.237
+tklid-monit0001.vm.mos.cloud.sbrf.ru
+порт 5433
+user aiadviser_admin
+db aiadviserdb
+pass aiadviser0TEST$Admin123
+Есть еще такой пользоватль
+aiadviser   aiadviser0TEST$User123
