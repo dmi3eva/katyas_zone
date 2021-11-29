@@ -4,6 +4,7 @@ import sqlite3
 import os
 
 REQUEST_MASK = "SELECT \"{column}\" FROM \"{table}\""
+TABLES_REQUEST = f"SELECT name FROM sqlite_master WHERE type='table'"
 
 from IPython.display import HTML, display
 
@@ -96,13 +97,32 @@ class EnSpiderDB(SpiderDB):
         self.schemes_path = "datasets/spider/tables.json"
 
     def get_dbs(self):
-        pass
+        return os.listdir(self.db_path)
 
     def get_tables(self):
-        pass
+        with open(self.schemes_path) as table_file:
+            schemes = json.load(table_file)
+        extracted_tables = {_s['db_id']: _s['table_names_original'] for _s in schemes}
+        return extracted_tables
 
     def get_columns(self):
-        pass
+        with open(self.schemes_path) as table_file:
+            schemes = json.load(table_file)
+        columns = {
+            _s['db_id']: {
+                _table: [] for _table in _s['table_names_original']
+            } for _s in schemes
+        }
+        for _scheme in schemes:
+            db_id = _scheme['db_id']
+            table_names = _scheme['table_names_original']
+            for _column in _scheme["column_names_original"]:
+                column_name = _column[1]
+                table_name = table_names[_column[0]]
+                if column_name == '*':
+                    continue
+                columns[db_id][table_name].append(column_name)
+        return columns
 
 
 class RuSpiderDB(SpiderDB):
@@ -111,10 +131,19 @@ class RuSpiderDB(SpiderDB):
         self.db_path = "datasets/russocampus/merged_database"
 
     def get_dbs(self):
-        pass
+        return os.listdir(self.db_path)
 
     def get_tables(self):
-        pass
+        tables = {}
+        for _db in self.dbs:
+            extracted_tables = self.execute_request(_db, TABLES_REQUEST)
+            tables[_db] = [_t[0] for _t in extracted_tables]
 
     def get_columns(self):
-        pass
+        columns = {}
+        COLUMNS_REQUEST = "PRAGMA table_info({:s});"
+        for _db in self.dbs:
+            columns[_db] = {}
+            for _table in self.tables[_db]:
+                extracted_columns = self.execute_request(_db, COLUMNS_REQUEST.format(_table))
+                columns[_db][_table] = [_c[1] for _c in extracted_columns]
