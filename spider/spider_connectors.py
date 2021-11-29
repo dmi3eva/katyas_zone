@@ -2,6 +2,7 @@ import json
 import collections
 import sqlite3
 import os
+from typing import *
 
 REQUEST_MASK = "SELECT \"{column}\" FROM \"{table}\""
 TABLES_REQUEST = f"SELECT name FROM sqlite_master WHERE type='table'"
@@ -22,36 +23,36 @@ def progress(value, max=100):
 class SpiderDB:
     def __init__(self):
         self.db_path = None
-        self.__dbs = None
-        self.__tables = None
-        self.__columns = None
+        self.__dbs: Union[List[str], None] = None
+        self.__tables: Union[List[str], None] = None
+        self.__columns: Union[List[str], None] = None
+
+    def get_dbs(self) -> List[str]:
+        pass
+
+    def get_tables(self) -> List[str]:
+        pass
+
+    def get_columns(self) -> List[str]:
+        pass
 
     @property
-    def dbs(self):
+    def dbs(self) -> List[str]:
         if not self.__dbs:
-            self.__dbs = self.get_dbs
+            self.__dbs = self.get_dbs()
         return self.__dbs
 
     @property
-    def tables(self):
+    def tables(self) -> List[str]:
         if not self.__tables:
-            self.__tables = self.get_tables
+            self.__tables = self.get_tables()
         return self.__tables
 
     @property
-    def columns(self):
+    def columns(self) -> List[str]:
         if not self.__columns:
-            self.__columns = self.get_columns
+            self.__columns = self.get_columns()
         return self.__columns
-
-    def get_dbs(self):
-        pass
-
-    def get_tables(self):
-        pass
-
-    def get_columns(self):
-        pass
 
     def execute_request(self, db_id, sql):
         db = os.path.join(self.db_path, db_id, db_id + ".sqlite")
