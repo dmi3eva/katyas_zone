@@ -27,31 +27,31 @@ class SpiderDB:
         self.__tables: Union[List[str], None] = None
         self.__columns: Union[List[str], None] = None
 
-    def get_dbs(self) -> List[str]:
+    def extract_dbs(self) -> List[str]:
         pass
 
-    def get_tables(self) -> List[str]:
+    def extract_tables(self) -> List[str]:
         pass
 
-    def get_columns(self) -> List[str]:
+    def extract_columns(self) -> List[str]:
         pass
 
     @property
     def dbs(self) -> List[str]:
         if not self.__dbs:
-            self.__dbs = self.get_dbs()
+            self.__dbs = self.extract_dbs()
         return self.__dbs
 
     @property
     def tables(self) -> List[str]:
         if not self.__tables:
-            self.__tables = self.get_tables()
+            self.__tables = self.extract_tables()
         return self.__tables
 
     @property
     def columns(self) -> List[str]:
         if not self.__columns:
-            self.__columns = self.get_columns()
+            self.__columns = self.extract_columns()
         return self.__columns
 
     def execute_request(self, db_id, sql):
@@ -97,16 +97,16 @@ class EnSpiderDB(SpiderDB):
         self.db_path = "datasets/spider/database"
         self.schemes_path = "datasets/spider/tables.json"
 
-    def get_dbs(self):
+    def extract_dbs(self):
         return os.listdir(self.db_path)
 
-    def get_tables(self):
+    def extract_tables(self):
         with open(self.schemes_path) as table_file:
             schemes = json.load(table_file)
         extracted_tables = {_s['db_id']: _s['table_names_original'] for _s in schemes}
         return extracted_tables
 
-    def get_columns(self):
+    def extract_columns(self):
         with open(self.schemes_path) as table_file:
             schemes = json.load(table_file)
         columns = {
@@ -131,16 +131,16 @@ class RuSpiderDB(SpiderDB):
         super().__init__()
         self.db_path = "datasets/russocampus/merged_database"
 
-    def get_dbs(self):
+    def extract_dbs(self):
         return os.listdir(self.db_path)
 
-    def get_tables(self):
+    def extract_tables(self):
         tables = {}
         for _db in self.dbs:
             extracted_tables = self.execute_request(_db, TABLES_REQUEST)
             tables[_db] = [_t[0] for _t in extracted_tables]
 
-    def get_columns(self):
+    def extract_columns(self):
         columns = {}
         COLUMNS_REQUEST = "PRAGMA table_info({:s});"
         for _db in self.dbs:
