@@ -24,16 +24,16 @@ class SpiderDB:
     def __init__(self):
         self.db_path = None
         self.__dbs: Union[List[str], None] = None
-        self.__tables: Union[List[str], None] = None
-        self.__columns: Union[List[str], None] = None
+        self.__tables: Union[Dict, None] = None
+        self.__columns: Union[Dict, None] = None
 
     def extract_dbs(self) -> List[str]:
         pass
 
-    def extract_tables(self) -> List[str]:
+    def extract_tables(self) -> Dict:
         pass
 
-    def extract_columns(self) -> List[str]:
+    def extract_columns(self) -> Dict:
         pass
 
     @property
@@ -43,18 +43,18 @@ class SpiderDB:
         return self.__dbs
 
     @property
-    def tables(self) -> List[str]:
+    def tables(self) -> Dict:
         if not self.__tables:
             self.__tables = self.extract_tables()
         return self.__tables
 
     @property
-    def columns(self) -> List[str]:
+    def columns(self) -> Dict:
         if not self.__columns:
             self.__columns = self.extract_columns()
         return self.__columns
 
-    def execute_request(self, db_id, sql):
+    def execute_request(self, db_id: str, sql: str):
         db = os.path.join(self.db_path, db_id, db_id + ".sqlite")
         conn = sqlite3.connect(db)
         conn.text_factory = lambda b: b.decode(errors='ignore')
@@ -66,7 +66,7 @@ class SpiderDB:
         except:
             raise ValueError
 
-    def get_values(self, db, table, column):
+    def get_values(self, db: str, table: str, column: str) -> List[str]:
         # Возвращает значения из столбца данной таблицы
         aim_request = REQUEST_MASK.format(table=table, column=column)
         try:
@@ -78,13 +78,13 @@ class SpiderDB:
             print(f"Problem with {column} in {table} (db = {db}). Request: {aim_request}")
             return []
 
-    def get_db_tables(self, db):
-        return self.tables[db]
+    def get_db_tables(self, db: str) -> List[str]:
+        return self.__tables[db]
 
-    def get_db_columns(self, db, table):
-        return self.columns[db][table]
+    def get_db_columns(self, db: str, table: str) -> List[str]:
+        return self.__columns[db][table]
 
-    def show_table(self, db, table):
+    def show_table(self, db: str, table: str):
         values_request = f"SELECT * FROM {table}"
         values = self.execute_request(db, values_request)
         column_names = tuple(self.get_db_columns(db, table))
@@ -100,13 +100,13 @@ class EnSpiderDB(SpiderDB):
     def extract_dbs(self):
         return os.listdir(self.db_path)
 
-    def extract_tables(self):
+    def extract_tables(self) -> Dict:
         with open(self.schemes_path) as table_file:
             schemes = json.load(table_file)
         extracted_tables = {_s['db_id']: _s['table_names_original'] for _s in schemes}
         return extracted_tables
 
-    def extract_columns(self):
+    def extract_columns(self) -> Dict:
         with open(self.schemes_path) as table_file:
             schemes = json.load(table_file)
         columns = {
@@ -134,13 +134,14 @@ class RuSpiderDB(SpiderDB):
     def extract_dbs(self):
         return os.listdir(self.db_path)
 
-    def extract_tables(self):
+    def extract_tables(self) -> Dict:
         tables = {}
         for _db in self.dbs:
             extracted_tables = self.execute_request(_db, TABLES_REQUEST)
             tables[_db] = [_t[0] for _t in extracted_tables]
+        return tables
 
-    def extract_columns(self):
+    def extract_columns(self) -> Dict:
         columns = {}
         COLUMNS_REQUEST = "PRAGMA table_info({:s});"
         for _db in self.dbs:
@@ -148,3 +149,4 @@ class RuSpiderDB(SpiderDB):
             for _table in self.tables[_db]:
                 extracted_columns = self.execute_request(_db, COLUMNS_REQUEST.format(_table))
                 columns[_db][_table] = [_c[1] for _c in extracted_columns]
+        return columns
