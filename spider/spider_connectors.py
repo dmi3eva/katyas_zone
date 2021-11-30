@@ -79,10 +79,10 @@ class SpiderDB:
             return []
 
     def get_db_tables(self, db: str) -> List[str]:
-        return self.__tables[db]
+        return self.tables[db]
 
     def get_db_columns(self, db: str, table: str) -> List[str]:
-        return self.__columns[db][table]
+        return self.columns[db][table]
 
     def show_table(self, db: str, table: str):
         values_request = f"SELECT * FROM {table}"
