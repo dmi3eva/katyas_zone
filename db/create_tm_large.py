@@ -9,7 +9,7 @@ USER = "postgres"
 PASSWORD = "100542"
 
 conn = psycopg2.connect(
-    user= USER,
+    user=USER,
     password=PASSWORD,
     host=HOST,
     port=PORT,

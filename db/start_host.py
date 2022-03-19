@@ -9,7 +9,6 @@ PASSWORD = "100542"
 
 app = Flask(__name__)
 
-
 @app.route("/")
 def usual():
     return "<p>Hello!</p>"

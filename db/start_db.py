@@ -24,10 +24,11 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+
 db.create_all()
 admin = User(username='admin', email='admin@example.com')
 guest = User(username=USER, email='guest@example.com')
 db.session.add(admin)
 db.session.add(guest)
 db.session.commit()
-# app.run(host=HOST, port=PORT)
+app.run(host=HOST, port=PORT)
