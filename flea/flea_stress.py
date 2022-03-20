@@ -3,51 +3,51 @@ from tkinter import Label
 
 
 def flea_a(step):
-  pass
+  return 6-step, 0, "Путятя"
 
 
 def flea_b(step):
-  pass
+  return 0, step, "Катя"
 
 
 def flea_c(step):
-  pass
+  return step, step, "Ира"
 
 
 def flea_d(step):
-  pass
+  return 6-step, step, "Маша"
 
 
 def flea_e(step):
-  pass
+  return 2, 2, "Анастасия"
 
 
 def flea_f(step):
-  pass
+  return 6-step, 0, "Виссарион"
 
 
 def flea_g(step):
-  pass
+  return 6-step, 0, "Александр"
 
 
 def flea_h(step):
-  pass
+  return 6-step, 0, "Михаил"
 
 
 def flea_i(step):
-  pass
+  return 6-step, 0, "Димас"
 
 
 def flea_j(step):
-  pass
+  return 6-step, 0, "Гераклида"
 
 
 def flea_k(step):
-  pass
+  return 6-step, 0, "Афанасий"
 
 
 def flea_l(step):
-  pass
+  return 6-step, 0, "Лиссабон"
 
 
 def clear_all():
@@ -106,7 +106,7 @@ def make_all_steps():
       cells[x][y].configure(background='#ffdfc4')
       positions[x][y].append(name)
     except:
-      print("Incorrect step")
+      print("Error")
   recalculate_scores()
   change_labels()
 
