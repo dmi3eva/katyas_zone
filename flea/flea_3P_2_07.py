@@ -4,16 +4,19 @@ import random
 
 
 def flea_a(step):
-  pass
+  x = random.randint(0, 5)
+  y = random.randint(0, 5)
+  return x, y, 'Михаил'
 
 
 def flea_b(step):
-  pass
+  x = step // 2
+  y = step + 1
+  return x, y, "Иван"
 
 
 def flea_c(step):
-  pass
-
+  return step-(6*(step//6)), step//6, 'Ратмир'
 
 def flea_d(step):
   pass

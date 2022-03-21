@@ -3,7 +3,7 @@ from tkinter import Label
 
 
 def flea_a(step):
-  return 6-step, 0, "Путятя"
+  pass
 
 
 def flea_b(step):
@@ -50,6 +50,9 @@ def flea_l(step):
   return 6-step, 0, "Лиссабон"
 
 
+fleas_functions = [flea_a, flea_b, flea_c, flea_d, flea_e, flea_f, flea_g, flea_h, flea_i, flea_j, flea_k, flea_l]
+
+
 def clear_all():
   for i in range(TABLE_SIZE):
     for j in range(TABLE_SIZE):
@@ -76,10 +79,11 @@ def change_scores_label():
 def recalculate_scores():
   for i in range(TABLE_SIZE):
     for j in range(TABLE_SIZE):
+      for _name in positions[i][j]:
+        if table[i][j]:
+          scores[_name] = scores.get(_name, 0) + 1. / len(positions[i][j])
       if len(positions[i][j]) > 0:
         table[i][j] = False
-      for _name in positions[i][j]:
-        scores[_name] = scores.get(_name, 0) + 1. / len(positions[i][j])
   change_scores_label()
 
 
@@ -94,12 +98,7 @@ def change_labels():
       cells[i][j].configure(text=label)
 
 
-def make_all_steps():
-  global step
-  step += 1
-  step_label.configure(text=f"Шаг №{step}")
-  fleas_functions = [flea_a, flea_b, flea_c, flea_d, flea_e, flea_f, flea_g, flea_h, flea_i, flea_j, flea_k, flea_l]
-  clear_all()
+def make_one_step():
   for _flea in fleas_functions:
     try:
       x, y, name = _flea(step)
@@ -107,6 +106,14 @@ def make_all_steps():
       positions[x][y].append(name)
     except:
       print("Error")
+
+
+def make_all_steps():
+  global step
+  step += 1
+  step_label.configure(text=f"Шаг №{step}")
+  clear_all()
+  make_one_step()
   recalculate_scores()
   change_labels()
 
